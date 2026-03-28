@@ -79,7 +79,7 @@ function shot(projectile)
     end)
 
     if enemy ~= nil and ModSettingGet("thaumic_guidance.arcane_identification") ~= false then
-        local name = EntityGetName(enemy)
+        local name = GameTextGetTranslatedOrNot(EntityGetName(enemy))
         if name == "" then name = "Unknown" end
         GamePrint("Thaumic sigil bound to " .. name .. "!")
     end
