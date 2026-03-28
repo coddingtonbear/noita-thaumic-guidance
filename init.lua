@@ -1,6 +1,4 @@
-print("Loading Aim Assist Mod")
-
-dofile_once("mods/aim_assist/files/scripts/lib/utilities.lua")
+dofile_once("mods/thaumic_guidance/files/scripts/lib/utilities.lua")
 
 function OnPlayerSpawned(player)
     local player_object = Player(player)

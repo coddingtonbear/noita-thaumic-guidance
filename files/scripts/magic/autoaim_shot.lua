@@ -1,4 +1,4 @@
-dofile_once("mods/aim_assist/files/scripts/lib/utilities.lua")
+dofile_once("mods/thaumic_guidance/files/scripts/lib/utilities.lua")
 
 local function get_direction_difference_abs(a, b)
     return math.abs(get_direction_difference(a, b))
