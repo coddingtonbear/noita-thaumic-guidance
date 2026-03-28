@@ -1,6 +1,8 @@
+dofile_once("data/scripts/lib/utilities.lua")
 dofile_once("data/scripts/lib/mod_settings.lua")
 
 local mod_id = "thaumic_guidance"
+mod_settings_version = 1
 
 local settings = {
     {
@@ -17,10 +19,10 @@ function ModSettingsUpdate(init_scope)
     mod_settings_update(mod_id, settings, init_scope)
 end
 
-function ModSettingsGuiOrderNumber()
-    return 0
+function ModSettingsGuiCount()
+    return mod_settings_gui_count(mod_id, settings)
 end
 
-function ModSettingsGui(gui, in_main_menu, mod_setting_info)
-    mod_settings_gui(mod_id, settings, gui, in_main_menu, mod_setting_info)
+function ModSettingsGui(gui, in_main_menu)
+    mod_settings_gui(mod_id, settings, gui, in_main_menu)
 end
