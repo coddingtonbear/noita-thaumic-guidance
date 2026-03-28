@@ -1,3 +1,5 @@
+![Thaumic Guidance](assets/hero.png)
+
 # Thaumic Guidance
 
 Gamepad-friendly aim assist mod for Noita — a fork of the original Aim Assist mod, fixed and improved.
