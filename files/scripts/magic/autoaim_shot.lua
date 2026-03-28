@@ -43,6 +43,15 @@ function shot(projectile)
         local b_weight = b_distance * get_direction_difference_abs(b_direction, velocity_direction)
         return a_weight < b_weight
     end)
+
+    if enemy ~= nil then
+        GamePrint("Autoaim target: " .. tostring(enemy))
+         print("Autoaim target: " .. tostring(enemy))
+    else
+        GamePrint("No autoaim target found")
+         print("No autoaim target found")
+    end
+
     if enemy == nil then return end
 
     ComponentSetValue2(projectile_component, "lob_min", math.max(ComponentGetValue2(projectile_component, "lob_min"), 1))
