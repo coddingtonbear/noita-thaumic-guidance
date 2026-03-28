@@ -13,6 +13,13 @@ mod_settings = {
         value_default = true,
         scope = MOD_SETTING_SCOPE_RUNTIME,
     },
+    {
+        id = "arcane_identification",
+        ui_name = "Arcane Identification",
+        ui_description = "Show the name of the targeted enemy in the game log when Thaumic Guidance locks on.",
+        value_default = true,
+        scope = MOD_SETTING_SCOPE_RUNTIME,
+    },
 }
 
 function ModSettingsUpdate(init_scope)

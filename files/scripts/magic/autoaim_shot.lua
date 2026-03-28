@@ -78,9 +78,10 @@ function shot(projectile)
         return a_weight < b_weight
     end)
 
-    if enemy ~= nil then
-        GamePrint("Thaumic Guidance Locked!")
-        print("Thaumic Guidance target: " .. tostring(enemy))
+    if enemy ~= nil and ModSettingGet("thaumic_guidance.arcane_identification") ~= false then
+        local name = EntityGetName(enemy)
+        if name == "" then name = "Unknown" end
+        GamePrint("Thaumic sigil bound to " .. name .. "!")
     end
 
     if enemy == nil then return end
