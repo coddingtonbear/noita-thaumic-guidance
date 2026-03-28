@@ -4,7 +4,9 @@ local last_enabled = nil
 
 function OnPlayerSpawned(player)
     local autoaim = Player(player).autoaim  -- Creates the LuaComponent if not present.
-    last_enabled = nil                       -- Force setting re-application on next update.
+    if autoaim ~= nil and last_enabled ~= nil then
+        autoaim._enabled = last_enabled
+    end
 end
 
 function OnWorldPostUpdate()
