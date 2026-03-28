@@ -3,7 +3,7 @@ dofile_once("mods/thaumic_guidance/files/scripts/lib/utilities.lua")
 local last_enabled = nil
 
 local function announce_enabled(enabled)
-    GamePrint("Thaumic Guidance " .. (enabled and "enabled" or "disabled"))
+    GamePrint("Thaumic sigils " .. (enabled and "awakened" or "dormant") .. ".")
 end
 
 function OnPlayerSpawned(player)
