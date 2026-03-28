@@ -18,7 +18,7 @@ Player = Entity{
     character_data = ComponentField("CharacterDataComponent"),
     collision = ComponentField("PlayerCollisionComponent"),
     inventory = ComponentField("Inventory2Component"),
-    autoaim = ComponentField{"LuaComponent", "iota_multiplayer.autoaim", _tags = "iota_multiplayer.autoaim", _enabled = false, script_shot = "mods/iota_multiplayer/files/scripts/perks/autoaim_shot.lua"},
+    autoaim = ComponentField{"LuaComponent", "aim_assist.autoaim", _tags = "aim_assist.autoaim", _enabled = false, script_shot = "mods/aim_assist/files/scripts/magic/autoaim_shot.lua"},
     index = VariableField("iota_multiplayer.index", "value_int"),
     previous_money = VariableField("iota_multiplayer.previous_money", "value_int"),
     damage_frame = VariableField("iota_multiplayer.damage_frame", "value_int"),
