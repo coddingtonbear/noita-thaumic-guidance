@@ -1,4 +1,4 @@
-![Thaumic Guidance](preview.png)
+![Thaumic Guidance](workshop_preview_image.png)
 
 # Thaumic Guidance
 
