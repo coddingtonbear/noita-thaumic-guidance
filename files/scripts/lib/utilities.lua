@@ -19,11 +19,4 @@ Player = Entity{
     collision = ComponentField("PlayerCollisionComponent"),
     inventory = ComponentField("Inventory2Component"),
     autoaim = ComponentField{"LuaComponent", "thaumic_guidance.autoaim", _tags = "thaumic_guidance.autoaim", _enabled = false, script_shot = "mods/thaumic_guidance/files/scripts/magic/autoaim_shot.lua"},
-    index = VariableField("iota_multiplayer.index", "value_int"),
-    previous_money = VariableField("iota_multiplayer.previous_money", "value_int"),
-    damage_frame = VariableField("iota_multiplayer.damage_frame", "value_int"),
-    damage_message = VariableField("iota_multiplayer.damage_message", "value_string"),
-    damage_responsible = VariableField("iota_multiplayer.damage_responsible", "value_string"),
-    load_frame = VariableField("iota_multiplayer.load_frame", "value_int"),
-    ingestion_data = VariableField("iota_multiplayer.ingestion_data", "value_string"),
 }
