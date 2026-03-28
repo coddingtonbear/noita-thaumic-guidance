@@ -1,4 +1,5 @@
 <Mod
     name="Thaumic Guidance"
-    description="Gamepad-friendly aim assist mod for Noita (fork of Aim Assist, fixed and improved)."
+    description="Gamepad-friendly aim assist mod for Noita (fork of Aim Assist, fixed and improved).",
+    request_no_api_restrictions="0"
 />

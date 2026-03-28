@@ -1,4 +1,4 @@
-![Thaumic Guidance](assets/hero.png)
+![Thaumic Guidance](preview.png)
 
 # Thaumic Guidance
 
