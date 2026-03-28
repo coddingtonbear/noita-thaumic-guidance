@@ -45,11 +45,8 @@ function shot(projectile)
     end)
 
     if enemy ~= nil then
-        GamePrint("Autoaim target: " .. tostring(enemy))
-         print("Autoaim target: " .. tostring(enemy))
-    else
-        GamePrint("No autoaim target found")
-         print("No autoaim target found")
+        GamePrint("Thaumic Guidance Locked!")
+         print("Thaumic Guidance target: " .. tostring(enemy))
     end
 
     if enemy == nil then return end
