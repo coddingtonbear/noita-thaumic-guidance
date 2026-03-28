@@ -13,13 +13,16 @@ function OnWorldPostUpdate()
     local setting_enabled = ModSettingGet("thaumic_guidance.enabled")
     local mod_enabled = setting_enabled == nil or setting_enabled == true
     if mod_enabled ~= last_enabled then
+        local players = EntityGetWithTag("player_unit") or {}
         last_enabled = mod_enabled
-        for _, player in ipairs(EntityGetWithTag("player_unit") or {}) do
+        for _, player in ipairs(players) do
             local autoaim = Player(player).autoaim
             if autoaim ~= nil then
                 autoaim._enabled = mod_enabled
             end
         end
-        GamePrint("Thaumic Guidance " .. (mod_enabled and "enabled" or "disabled"))
+        if #players > 0 then
+            GamePrint("Thaumic Guidance " .. (mod_enabled and "enabled" or "disabled"))
+        end
     end
 end
