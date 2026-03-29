@@ -8,10 +8,17 @@ When you fire a projectile, Thaumic Guidance automatically steers it toward the 
 
 ## Features
 
-- **Aim assist** — redirects projectiles toward enemies within a targeting cone, prioritizing by distance and angular alignment
-- **Arcane Identification** — optionally prints the locked-on enemy's name to the game log ("Thaumic sigil bound to [enemy]!")
+- **Thaumic Guidance** _(aim assist)_ — redirects projectiles toward enemies within a targeting cone, prioritizing by distance and angular alignment
+- **Arcane Identification** _(targeted enemy identification)_ — optionally prints the locked-on enemy's name to the game log ("Thaumic sigil bound to [enemy]!")
 
 ## Installation
+
+You can either install this via the Steam Workshop:
+
+1. Go to https://steamcommunity.com/sharedfiles/filedetails/?id=3694371849 and subscribe to this mod.
+2. Launch Noita and enable **Thaumic Guidance** in the Mods menu.
+
+or by cloning this repository manually:
 
 1. Clone this repository into Noita's mods directory, naming the folder `thaumic_guidance`:
    - **Linux (Steam):** `~/.steam/steam/steamapps/common/Noita/mods/thaumic_guidance`
@@ -43,4 +50,4 @@ files/scripts/
 
 ## Credits
 
-Based on the original [Aim Assist](https://steamcommunity.com/sharedfiles/filedetails/?id=3613890248) mod for Noita.
+Based on the original [Aim Assist](https://steamcommunity.com/sharedfiles/filedetails/?id=3613890248) mod for Noita by ImmortalDamned.
