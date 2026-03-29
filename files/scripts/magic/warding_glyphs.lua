@@ -7,14 +7,19 @@ local FOG_THRESHOLD = 200
 local EDGE_MARGIN = 4
 local SCREEN_INSET = 2  -- buffer zone to avoid flicker at screen edges
 local MAX_INDICATORS = 16
+local RECALC_INTERVAL = 5  -- recalculate enemy positions every N frames
 local SPRITE = "mods/thaumic_guidance/files/scripts/magic/warding_glyph.png"
 
-function source()
-    local entity = GetUpdatedEntityID()
-    local player_x, player_y = EntityGetTransform(entity)
-    if player_x == nil then return end
+local cached_indicators = {}
 
-    local screen_w, screen_h = get_resolution(gui)
+local function recalculate(entity)
+    local player_x, player_y = EntityGetTransform(entity)
+    if player_x == nil then
+        cached_indicators = {}
+        return
+    end
+
+    local screen_w, screen_h = GuiGetScreenDimensions(gui)
 
     local enemies = EntityGetWithTag("enemy") or {}
     local indicators = {}
@@ -31,8 +36,15 @@ function source()
                sy < SCREEN_INSET or sy > screen_h - SCREEN_INSET then
                 local dist = get_distance(player_x, player_y, ex, ey)
                 local has_los = not RaytraceSurfaces(player_x, player_y, ex, ey)
+
+                local center_x, center_y = screen_w * 0.5, screen_h * 0.5
+                local cx = clamp(sx, EDGE_MARGIN, screen_w - EDGE_MARGIN)
+                local cy = clamp(sy, EDGE_MARGIN, screen_h - EDGE_MARGIN)
+                local angle = math.atan2(sy - center_y, sx - center_x)
+
                 indicators[#indicators + 1] = {
-                    sx = sx, sy = sy,
+                    cx = cx, cy = cy,
+                    angle = angle,
                     has_los = has_los,
                     distance = dist,
                 }
@@ -41,17 +53,20 @@ function source()
     end
 
     table.sort(indicators, function(a, b) return a.distance < b.distance end)
+    cached_indicators = indicators
+end
+
+function source()
+    local entity = GetUpdatedEntityID()
+
+    if GameGetFrameNum() % RECALC_INTERVAL == 0 then
+        recalculate(entity)
+    end
 
     local widget_list = widget_list_begin(window, 100)
-    local center_x, center_y = screen_w * 0.5, screen_h * 0.5
 
-    for i = 1, math.min(#indicators, MAX_INDICATORS) do
-        local ind = indicators[i]
-
-        local cx = clamp(ind.sx, EDGE_MARGIN, screen_w - EDGE_MARGIN)
-        local cy = clamp(ind.sy, EDGE_MARGIN, screen_h - EDGE_MARGIN)
-
-        local angle = math.atan2(ind.sy - center_y, ind.sx - center_x)
+    for i = 1, math.min(#cached_indicators, MAX_INDICATORS) do
+        local ind = cached_indicators[i]
 
         if ind.has_los then
             widget_list_insert(widget_list, GuiColorSetForNextWidget, 1.0, 0.3, 0.1, 1.0)
@@ -60,7 +75,7 @@ function source()
         end
 
         local id = widget_list_id(widget_list, source)
-        widget_list_insert(widget_list, GuiImage, id, cx, cy, SPRITE, 1.0, 1.0, 0, angle)
+        widget_list_insert(widget_list, GuiImage, id, ind.cx, ind.cy, SPRITE, 1.0, 1.0, 0, ind.angle)
     end
 
     widget_list_end(widget_list)
