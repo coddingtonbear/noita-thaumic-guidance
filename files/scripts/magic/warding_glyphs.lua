@@ -1,5 +1,3 @@
-GamePrint("Warding glyphs file loaded!")
-
 dofile_once("mods/thaumic_guidance/files/scripts/lib/utilities.lua")
 
 local gui = gui or GuiCreate()
@@ -86,14 +84,14 @@ local function recalculate(entity)
 end
 
 function source()
-    if GameGetFrameNum() % 300 == 0 then
-        GamePrint("Warding glyphs script alive, frame=" .. GameGetFrameNum())
-    end
-
     local entity = GetUpdatedEntityID()
 
     if GameGetFrameNum() % RECALC_INTERVAL == 0 then
         recalculate(entity)
+    end
+
+    if GameGetFrameNum() % 60 == 0 then
+        GamePrint("Warding: " .. #cached_indicators .. " indicators, sprite=" .. tostring(sprite_w) .. "x" .. tostring(sprite_h))
     end
 
     local widget_list = widget_list_begin(window, 100)
