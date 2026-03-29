@@ -1,3 +1,5 @@
+GamePrint("Warding glyphs file loaded!")
+
 dofile_once("mods/thaumic_guidance/files/scripts/lib/utilities.lua")
 
 local gui = gui or GuiCreate()
