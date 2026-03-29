@@ -84,6 +84,10 @@ local function recalculate(entity)
 end
 
 function source()
+    if GameGetFrameNum() % 300 == 0 then
+        GamePrint("Warding glyphs script alive, frame=" .. GameGetFrameNum())
+    end
+
     local entity = GetUpdatedEntityID()
 
     if GameGetFrameNum() % RECALC_INTERVAL == 0 then
