@@ -20,6 +20,13 @@ mod_settings = {
         value_default = true,
         scope = MOD_SETTING_SCOPE_RUNTIME,
     },
+    {
+        id = "warding_glyphs",
+        ui_name = "Warding Glyphs",
+        ui_description = "Show indicators at the edge of the screen pointing toward off-screen enemies.",
+        value_default = true,
+        scope = MOD_SETTING_SCOPE_RUNTIME,
+    },
 }
 
 function ModSettingsUpdate(init_scope)

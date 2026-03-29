@@ -19,4 +19,5 @@ Player = Entity{
     collision = ComponentField("PlayerCollisionComponent"),
     inventory = ComponentField("Inventory2Component"),
     autoaim = ComponentField{"LuaComponent", "thaumic_guidance.autoaim", _tags = "thaumic_guidance.autoaim", _enabled = false, script_shot = "mods/thaumic_guidance/files/scripts/magic/autoaim_shot.lua"},
+    warding_glyphs = ComponentField{"LuaComponent", "thaumic_guidance.warding_glyphs", _tags = "thaumic_guidance.warding_glyphs", _enabled = false, script_source_file = "mods/thaumic_guidance/files/scripts/magic/warding_glyphs.lua", execute_every_n_frame = 5},
 }

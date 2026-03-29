@@ -10,6 +10,7 @@ When you fire a projectile, Thaumic Guidance automatically steers it toward the 
 
 - **Thaumic Guidance** _(aim assist)_ — redirects projectiles toward enemies within a targeting cone, prioritizing by distance and angular alignment
 - **Arcane Identification** _(targeted enemy identification)_ — optionally prints the locked-on enemy's name to the game log ("Thaumic sigil bound to [enemy]!")
+- **Warding Glyphs** _(off-screen enemy indicators)_ — shows directional indicators at the screen edges pointing toward off-screen enemies, with brighter glyphs for enemies in line of sight and dimmer ones for those behind cover; ignores enemies hidden by fog of war or invisibility
 
 ## Installation
 
@@ -35,6 +36,7 @@ Both settings can be changed at runtime from the mod settings panel without rest
 |---|---|---|
 | Enabled | On | Toggle aim assist on or off |
 | Arcane Identification | On | Show targeted enemy names in the game log |
+| Warding Glyphs | On | Show off-screen enemy indicators at screen edges |
 
 ## Project Structure
 
@@ -44,6 +46,8 @@ settings.lua                      # Runtime settings definitions
 mod.xml                           # Mod name and description
 files/scripts/
   magic/autoaim_shot.lua          # Core targeting algorithm and projectile redirection
+  magic/warding_glyphs.lua        # Off-screen enemy indicator rendering
+  magic/warding_glyph.png         # Indicator sprite asset
   lib/tactic.lua                  # Player entity abstraction and LuaComponent setup
   lib/utilities.lua               # Entity/Component helpers, math utilities, Lua extensions
 ```
