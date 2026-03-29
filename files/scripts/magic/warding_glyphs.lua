@@ -10,9 +10,9 @@ local MAX_INDICATORS = 16
 local RECALC_INTERVAL = 5  -- recalculate enemy positions every N frames
 local SPRITE = "mods/thaumic_guidance/files/scripts/magic/warding_glyph.png"
 
-local DEBUG = true
-
 local cached_indicators = {}
+local sprite_w = nil
+local sprite_h = nil
 
 local function recalculate(entity)
     local player_x, player_y = EntityGetTransform(entity)
@@ -21,7 +21,12 @@ local function recalculate(entity)
         return
     end
 
+    if sprite_w == nil then
+        sprite_w, sprite_h = GuiGetImageDimensions(gui, SPRITE)
+    end
+
     local screen_w, screen_h = GuiGetScreenDimensions(gui)
+    local half_w, half_h = sprite_w * 0.5, sprite_h * 0.5
 
     local enemies = EntityGetWithTag("enemy") or {}
     local indicators = {}
@@ -40,8 +45,9 @@ local function recalculate(entity)
                 local has_los = not RaytraceSurfaces(player_x, player_y, ex, ey)
 
                 local center_x, center_y = screen_w * 0.5, screen_h * 0.5
-                local cx = clamp(sx, EDGE_MARGIN, screen_w - EDGE_MARGIN)
-                local cy = clamp(sy, EDGE_MARGIN, screen_h - EDGE_MARGIN)
+                -- Clamp so the sprite center stays on-screen with margin
+                local cx = clamp(sx, EDGE_MARGIN + half_w, screen_w - EDGE_MARGIN - half_w) - half_w
+                local cy = clamp(sy, EDGE_MARGIN + half_h, screen_h - EDGE_MARGIN - half_h) - half_h
                 local angle = math.atan2(sy - center_y, sx - center_x)
 
                 indicators[#indicators + 1] = {
@@ -66,35 +72,6 @@ function source()
     end
 
     local widget_list = widget_list_begin(window, 100)
-
-    if DEBUG then
-        local screen_w, screen_h = GuiGetScreenDimensions(gui)
-        local player_sx, player_sy = get_pos_on_screen(EntityGetTransform(entity))
-
-        -- corners: top-left, top-right, bottom-left, bottom-right
-        local corners = {
-            {EDGE_MARGIN, EDGE_MARGIN},
-            {screen_w - EDGE_MARGIN, EDGE_MARGIN},
-            {EDGE_MARGIN, screen_h - EDGE_MARGIN},
-            {screen_w - EDGE_MARGIN, screen_h - EDGE_MARGIN},
-        }
-
-        for _, corner in ipairs(corners) do
-            -- "10" at each corner
-            local id = widget_list_id(widget_list, source)
-            widget_list_insert(widget_list, GuiText, corner[1], corner[2], "10")
-
-            -- ascending numbers along line from player screen pos to corner
-            local steps = 10
-            for s = 1, steps - 1 do
-                local t = s / steps
-                local lx = player_sx + (corner[1] - player_sx) * t
-                local ly = player_sy + (corner[2] - player_sy) * t
-                local id2 = widget_list_id(widget_list, source)
-                widget_list_insert(widget_list, GuiText, lx, ly, tostring(s))
-            end
-        end
-    end
 
     for i = 1, math.min(#cached_indicators, MAX_INDICATORS) do
         local ind = cached_indicators[i]
