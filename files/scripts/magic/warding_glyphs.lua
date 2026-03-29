@@ -85,13 +85,12 @@ end
 
 function source()
     local entity = GetUpdatedEntityID()
+    local frame = GameGetFrameNum() or 0
 
-    if GameGetFrameNum() % RECALC_INTERVAL == 0 then
+    GamePrint("source() frame=" .. frame .. " inds=" .. #cached_indicators)
+
+    if frame % RECALC_INTERVAL == 0 then
         recalculate(entity)
-    end
-
-    if GameGetFrameNum() % 60 == 0 then
-        GamePrint("Warding: " .. #cached_indicators .. " indicators, sprite=" .. tostring(sprite_w) .. "x" .. tostring(sprite_h))
     end
 
     local widget_list = widget_list_begin(window, 100)
