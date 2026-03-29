@@ -7,13 +7,15 @@ local FOG_THRESHOLD = 200
 local EDGE_MARGIN = 4
 local SCREEN_INSET = 2  -- buffer zone to avoid flicker at screen edges
 local MAX_INDICATORS = 16
-local RECALC_INTERVAL = 5  -- recalculate enemy positions every N frames
+local RECALC_INTERVAL = 15  -- recalculate enemy positions every N frames
 local SPRITE = "mods/thaumic_guidance/files/scripts/magic/warding_glyph.png"
 
 local cached_indicators = {}
 local sprite_w = nil
 local sprite_h = nil
 local last_debug_frame = -300  -- so first debug prints immediately
+
+local last_recalc_frame = -RECALC_INTERVAL  -- force recalc on first run
 
 local function recalculate(entity)
     local player_x, player_y = EntityGetTransform(entity)
@@ -87,10 +89,9 @@ function source()
     local entity = GetUpdatedEntityID()
     local frame = GameGetFrameNum() or 0
 
-    GamePrint("source() frame=" .. frame .. " inds=" .. #cached_indicators)
-
-    if frame % RECALC_INTERVAL == 0 then
-        recalculate(entity)
+    if frame - last_recalc_frame >= RECALC_INTERVAL then
+        last_recalc_frame = frame
+         recalculate(entity)
     end
 
     local widget_list = widget_list_begin(window, 100)
