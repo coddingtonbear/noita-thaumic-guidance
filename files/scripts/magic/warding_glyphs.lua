@@ -10,6 +10,8 @@ local MAX_INDICATORS = 16
 local RECALC_INTERVAL = 5  -- recalculate enemy positions every N frames
 local SPRITE = "mods/thaumic_guidance/files/scripts/magic/warding_glyph.png"
 
+local DEBUG = true
+
 local cached_indicators = {}
 
 local function recalculate(entity)
@@ -64,6 +66,35 @@ function source()
     end
 
     local widget_list = widget_list_begin(window, 100)
+
+    if DEBUG then
+        local screen_w, screen_h = GuiGetScreenDimensions(gui)
+        local player_sx, player_sy = get_pos_on_screen(EntityGetTransform(entity))
+
+        -- corners: top-left, top-right, bottom-left, bottom-right
+        local corners = {
+            {EDGE_MARGIN, EDGE_MARGIN},
+            {screen_w - EDGE_MARGIN, EDGE_MARGIN},
+            {EDGE_MARGIN, screen_h - EDGE_MARGIN},
+            {screen_w - EDGE_MARGIN, screen_h - EDGE_MARGIN},
+        }
+
+        for _, corner in ipairs(corners) do
+            -- "10" at each corner
+            local id = widget_list_id(widget_list, source)
+            widget_list_insert(widget_list, GuiText, corner[1], corner[2], "10")
+
+            -- ascending numbers along line from player screen pos to corner
+            local steps = 10
+            for s = 1, steps - 1 do
+                local t = s / steps
+                local lx = player_sx + (corner[1] - player_sx) * t
+                local ly = player_sy + (corner[2] - player_sy) * t
+                local id2 = widget_list_id(widget_list, source)
+                widget_list_insert(widget_list, GuiText, lx, ly, tostring(s))
+            end
+        end
+    end
 
     for i = 1, math.min(#cached_indicators, MAX_INDICATORS) do
         local ind = cached_indicators[i]
