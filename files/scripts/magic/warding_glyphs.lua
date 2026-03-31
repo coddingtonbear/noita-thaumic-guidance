@@ -15,9 +15,13 @@ local sprite_w = nil
 local sprite_h = nil
 local last_recalc_frame = -RECALC_INTERVAL  -- force recalc on first run
 
+-- gui_w/gui_h are set inside source() after GuiStartFrame, then used by recalculate()
+local gui_w = 0
+local gui_h = 0
+
 local function recalculate(entity)
     local player_x, player_y = EntityGetTransform(entity)
-    if player_x == nil then
+    if player_x == nil or gui_w == 0 then
         cached_indicators = {}
         return
     end
@@ -26,7 +30,6 @@ local function recalculate(entity)
         sprite_w, sprite_h = GuiGetImageDimensions(gui, SPRITE)
     end
 
-    local gui_w, gui_h = GuiGetScreenDimensions(gui)
     local half_w, half_h = sprite_w * 0.5, sprite_h * 0.5
 
     local enemies = EntityGetWithTag("enemy") or {}
@@ -80,20 +83,23 @@ function source()
     local entity = GetUpdatedEntityID()
     local frame = GameGetFrameNum() or 0
 
+    local widget_list = widget_list_begin(window, 100)
+
+    -- Read dimensions inside GuiStartFrame (called by widget_list_begin) for consistent values
+    gui_w, gui_h = GuiGetScreenDimensions(gui)
+
     if frame - last_recalc_frame >= RECALC_INTERVAL then
         last_recalc_frame = frame
         recalculate(entity)
     end
 
-    local gui_w, gui_h = GuiGetScreenDimensions(gui)
-
-    local widget_list = widget_list_begin(window, 100)
-
-    -- DEBUG: draw markers at each candidate bottom edge to find the real one
+    -- DEBUG: draw markers at candidate bottom edges
     local candidates = {180, 240, 360, 720}
     for _, y in ipairs(candidates) do
         widget_list_insert(widget_list, GuiText, 100, y - EDGE_MARGIN, "bot=" .. y)
     end
+    -- DEBUG: print gui dimensions every ~5s
+    widget_list_insert(widget_list, GuiText, 0, 10, "gui=" .. math.floor(gui_w) .. "x" .. math.floor(gui_h))
 
     for i = 1, math.min(#cached_indicators, MAX_INDICATORS) do
         local ind = cached_indicators[i]
