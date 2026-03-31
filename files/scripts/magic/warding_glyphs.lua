@@ -91,17 +91,22 @@ function source()
 
     local widget_list = widget_list_begin(window, 100)
 
-    -- DEBUG: log screen dimensions and first indicator position every ~5s
-    if frame - last_debug_frame >= 300 then
-        last_debug_frame = frame
-        local vx, vy = get_resolution(gui)
-        GamePrint("screen=" .. math.floor(screen_w) .. "x" .. math.floor(screen_h)
-            .. " vres=" .. math.floor(vx) .. "x" .. math.floor(vy)
-            .. " sprite=" .. tostring(sprite_w) .. "x" .. tostring(sprite_h))
-        if #cached_indicators > 0 then
-            local ind = cached_indicators[1]
-            GamePrint("ind[1] cx=" .. math.floor(ind.cx) .. " cy=" .. math.floor(ind.cy))
-        end
+    -- DEBUG: draw labeled dots at known coordinates to calibrate coordinate space
+    local probes = {
+        {0,   0,   "0,0"},
+        {320, 0,   "320,0"},
+        {640, 0,   "640,0"},
+        {960, 0,   "960,0"},
+        {1280,0,   "1280,0"},
+        {0,   360, "0,360"},
+        {640, 360, "640,360"},
+        {1280,360, "1280,360"},
+        {0,   720, "0,720"},
+        {640, 720, "640,720"},
+        {1280,720, "1280,720"},
+    }
+    for _, p in ipairs(probes) do
+        widget_list_insert(widget_list, GuiText, p[1], p[2], p[3])
     end
 
     for i = 1, math.min(#cached_indicators, MAX_INDICATORS) do
