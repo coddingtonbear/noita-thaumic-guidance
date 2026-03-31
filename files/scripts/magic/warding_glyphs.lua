@@ -59,13 +59,15 @@ local function recalculate(entity)
                 local angle = math.atan2(sy - origin_y, sx - origin_x)
                 local dx = sx - origin_x
                 local dy = sy - origin_y
-                local max_x = math.max(origin_x, gui_w - origin_x) - EDGE_MARGIN - half_w
-                local max_y = math.max(origin_y, gui_h - origin_y) - EDGE_MARGIN - half_h
-                local scale_x = dx ~= 0 and max_x / math.abs(dx) or math.huge
-                local scale_y = dy ~= 0 and max_y / math.abs(dy) or math.huge
-                local scale = math.min(scale_x, scale_y)
-                local cx = clamp(origin_x + dx * scale - half_w, EDGE_MARGIN, gui_w - EDGE_MARGIN - sprite_w)
-                local cy = clamp(origin_y + dy * scale - half_h, EDGE_MARGIN, gui_h - EDGE_MARGIN - sprite_h)
+                -- Directional ray-edge intersection: find t such that
+                -- origin + t*d hits the screen boundary in the direction of travel
+                local bound_x = dx > 0 and (gui_w - EDGE_MARGIN - half_w) or (EDGE_MARGIN + half_w)
+                local bound_y = dy > 0 and (gui_h - EDGE_MARGIN - half_h) or (EDGE_MARGIN + half_h)
+                local t_x = dx ~= 0 and (bound_x - origin_x) / dx or math.huge
+                local t_y = dy ~= 0 and (bound_y - origin_y) / dy or math.huge
+                local t = math.min(t_x, t_y)
+                local cx = origin_x + dx * t - half_w
+                local cy = origin_y + dy * t - half_h
 
                 indicators[#indicators + 1] = {
                     cx = cx, cy = cy,
@@ -92,18 +94,18 @@ function source()
 
     local widget_list = widget_list_begin(window, 100)
 
-    -- DEBUG: fine-grained y-axis probes to find actual GUI bottom
-    local probes = {
-        {0, 300, "y300"},
-        {0, 310, "y310"},
-        {0, 320, "y320"},
-        {0, 330, "y330"},
-        {0, 340, "y340"},
-        {0, 350, "y350"},
-        {0, 360, "y360"},
-    }
-    for _, p in ipairs(probes) do
-        widget_list_insert(widget_list, GuiText, p[1], p[2], p[3])
+    -- DEBUG: log player screen pos and first indicator position every ~5s
+    if frame - last_debug_frame >= 300 then
+        last_debug_frame = frame
+        local raw_w, raw_h = GuiGetScreenDimensions(gui)
+        local gui_w_d, gui_h_d = raw_w * 0.5, raw_h * 0.5
+        local ex, ey = EntityGetTransform(entity)
+        local raw_ox, raw_oy = ex and get_pos_on_screen(ex, ey, gui) or 0, 0
+        GamePrint("gui=" .. math.floor(gui_w_d) .. "x" .. math.floor(gui_h_d) .. " oy=" .. math.floor(raw_oy * 0.5))
+        if #cached_indicators > 0 then
+            local ind = cached_indicators[1]
+            GamePrint("ind cx=" .. math.floor(ind.cx) .. " cy=" .. math.floor(ind.cy))
+        end
     end
 
     for i = 1, math.min(#cached_indicators, MAX_INDICATORS) do
