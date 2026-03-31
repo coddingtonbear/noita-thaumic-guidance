@@ -13,8 +13,7 @@ local SPRITE = "mods/thaumic_guidance/files/scripts/magic/warding_glyph.png"
 local cached_indicators = {}
 local sprite_w = nil
 local sprite_h = nil
-local last_debug_frame = -300  -- so first debug prints immediately
-
+local last_debug_frame = -300
 local last_recalc_frame = -RECALC_INTERVAL  -- force recalc on first run
 
 local function recalculate(entity)
@@ -34,14 +33,6 @@ local function recalculate(entity)
     local enemies = EntityGetWithTag("enemy") or {}
     local indicators = {}
 
-    -- Debug: print off-screen enemy info every 5 seconds (~300 frames)
-    local frame = GameGetFrameNum()
-    local should_debug = (frame - last_debug_frame) >= 300
-    if should_debug then
-        last_debug_frame = frame
-        GamePrint("Warding debug: " .. #enemies .. " enemies, screen=" .. math.floor(screen_w) .. "x" .. math.floor(screen_h) .. ", sprite=" .. tostring(sprite_w) .. "x" .. tostring(sprite_h))
-    end
-
     for _, enemy in ipairs(enemies) do
         local ex, ey = EntityGetTransform(enemy)
         if ex ~= nil and enemy ~= entity and
@@ -53,14 +44,6 @@ local function recalculate(entity)
             local sx, sy = get_pos_on_screen(ex, ey, gui)
             local is_offscreen = sx < SCREEN_INSET or sx > screen_w - SCREEN_INSET or
                sy < SCREEN_INSET or sy > screen_h - SCREEN_INSET
-
-            if should_debug then
-                local name = GameTextGetTranslatedOrNot(EntityGetName(enemy))
-                if name == "" then name = "Unknown" end
-                -- Angle: 0 = top, clockwise
-                local deg = (math.deg(math.atan2(sx - screen_w * 0.5, -(sy - screen_h * 0.5))) + 360) % 360
-                GamePrint(name .. ": " .. math.floor(deg) .. "deg, screen=" .. math.floor(sx) .. "," .. math.floor(sy) .. (is_offscreen and " OFF" or " ON"))
-            end
 
             if is_offscreen then
                 local dist = get_distance(player_x, player_y, ex, ey)
