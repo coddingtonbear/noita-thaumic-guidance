@@ -92,6 +92,21 @@ function source()
 
     local widget_list = widget_list_begin(window, 100)
 
+    -- DEBUG: y-axis probes to confirm actual GUI height
+    local probes = {
+        {0, 0,   "y0"},
+        {0, 60,  "y60"},
+        {0, 120, "y120"},
+        {0, 180, "y180"},
+        {0, 240, "y240"},
+        {0, 300, "y300"},
+        {0, 360, "y360"},
+        {0, 420, "y420"},
+    }
+    for _, p in ipairs(probes) do
+        widget_list_insert(widget_list, GuiText, p[1], p[2], p[3])
+    end
+
     for i = 1, math.min(#cached_indicators, MAX_INDICATORS) do
         local ind = cached_indicators[i]
 
