@@ -27,7 +27,10 @@ local function recalculate(entity)
         sprite_w, sprite_h = GuiGetImageDimensions(gui, SPRITE)
     end
 
-    local screen_w, screen_h = GuiGetScreenDimensions(gui)
+    -- GuiGetScreenDimensions returns 2x the actual GUI coordinate space,
+    -- so divide by 2 to get the space that GuiImage/GuiText actually uses.
+    local raw_w, raw_h = GuiGetScreenDimensions(gui)
+    local gui_w, gui_h = raw_w * 0.5, raw_h * 0.5
     local half_w, half_h = sprite_w * 0.5, sprite_h * 0.5
 
     local enemies = EntityGetWithTag("enemy") or {}
@@ -41,28 +44,28 @@ local function recalculate(entity)
             -- GameGetFogOfWar(ex, ey) < FOG_THRESHOLD and
             -- not IsInvisible(enemy) then
 
-            local sx, sy = get_pos_on_screen(ex, ey, gui)
-            local is_offscreen = sx < SCREEN_INSET or sx > screen_w - SCREEN_INSET or
-               sy < SCREEN_INSET or sy > screen_h - SCREEN_INSET
+            -- get_pos_on_screen returns in [0, raw_w] space; scale to GUI space
+            local raw_sx, raw_sy = get_pos_on_screen(ex, ey, gui)
+            local sx, sy = raw_sx * 0.5, raw_sy * 0.5
+            local is_offscreen = sx < SCREEN_INSET or sx > gui_w - SCREEN_INSET or
+               sy < SCREEN_INSET or sy > gui_h - SCREEN_INSET
 
             if is_offscreen then
                 local dist = get_distance(player_x, player_y, ex, ey)
                 local has_los = not RaytraceSurfaces(player_x, player_y, ex, ey)
 
-                -- Use player's screen position as origin, not screen center,
-                -- so the ray direction matches the actual player→enemy direction
-                -- regardless of camera offset.
-                local origin_x, origin_y = get_pos_on_screen(player_x, player_y, gui)
+                local raw_ox, raw_oy = get_pos_on_screen(player_x, player_y, gui)
+                local origin_x, origin_y = raw_ox * 0.5, raw_oy * 0.5
                 local angle = math.atan2(sy - origin_y, sx - origin_x)
                 local dx = sx - origin_x
                 local dy = sy - origin_y
-                local max_x = math.max(origin_x, screen_w - origin_x) - EDGE_MARGIN - half_w
-                local max_y = math.max(origin_y, screen_h - origin_y) - EDGE_MARGIN - half_h
+                local max_x = math.max(origin_x, gui_w - origin_x) - EDGE_MARGIN - half_w
+                local max_y = math.max(origin_y, gui_h - origin_y) - EDGE_MARGIN - half_h
                 local scale_x = dx ~= 0 and max_x / math.abs(dx) or math.huge
                 local scale_y = dy ~= 0 and max_y / math.abs(dy) or math.huge
                 local scale = math.min(scale_x, scale_y)
-                local cx = clamp(origin_x + dx * scale - half_w, EDGE_MARGIN, screen_w - EDGE_MARGIN - sprite_w)
-                local cy = clamp(origin_y + dy * scale - half_h, EDGE_MARGIN, screen_h - EDGE_MARGIN - sprite_h)
+                local cx = clamp(origin_x + dx * scale - half_w, EDGE_MARGIN, gui_w - EDGE_MARGIN - sprite_w)
+                local cy = clamp(origin_y + dy * scale - half_h, EDGE_MARGIN, gui_h - EDGE_MARGIN - sprite_h)
 
                 indicators[#indicators + 1] = {
                     cx = cx, cy = cy,
@@ -84,30 +87,10 @@ function source()
 
     if frame - last_recalc_frame >= RECALC_INTERVAL then
         last_recalc_frame = frame
-         recalculate(entity)
+        recalculate(entity)
     end
-
-    local screen_w, screen_h = GuiGetScreenDimensions(gui)
 
     local widget_list = widget_list_begin(window, 100)
-
-    -- DEBUG: draw labeled dots at known coordinates to calibrate coordinate space
-    local probes = {
-        {0,   0,   "0,0"},
-        {320, 0,   "320,0"},
-        {640, 0,   "640,0"},
-        {960, 0,   "960,0"},
-        {1280,0,   "1280,0"},
-        {0,   360, "0,360"},
-        {640, 360, "640,360"},
-        {1280,360, "1280,360"},
-        {0,   720, "0,720"},
-        {640, 720, "640,720"},
-        {1280,720, "1280,720"},
-    }
-    for _, p in ipairs(probes) do
-        widget_list_insert(widget_list, GuiText, p[1], p[2], p[3])
-    end
 
     for i = 1, math.min(#cached_indicators, MAX_INDICATORS) do
         local ind = cached_indicators[i]
