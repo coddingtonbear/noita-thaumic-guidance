@@ -10,7 +10,7 @@ When you fire a projectile, Thaumic Guidance automatically steers it toward the 
 
 - **Thaumic Guidance** _(aim assist)_ — redirects projectiles toward enemies within a targeting cone, prioritizing by distance and angular alignment
 - **Arcane Identification** _(targeted enemy identification)_ — optionally prints the locked-on enemy's name to the game log ("Thaumic sigil bound to [enemy]!")
-- **Warding Glyphs** _(off-screen enemy indicators)_ — shows directional indicators at the screen edges pointing toward off-screen enemies, with brighter glyphs for enemies in line of sight and dimmer ones for those behind cover; ignores enemies hidden by fog of war or invisibility
+- **Warding Glyphs** _(off-screen enemy indicators)_ — shows directional indicators at the screen edges pointing toward off-screen enemies[^fog], with brighter glyphs for enemies in line of sight and dimmer ones for those behind cover.
 
 ## Installation
 
@@ -55,3 +55,5 @@ files/scripts/
 ## Credits
 
 Based on the original [Aim Assist](https://steamcommunity.com/sharedfiles/filedetails/?id=3613890248) mod for Noita by ImmortalDamned.
+
+[^fog]: Only enemies that are visible will be marked. The enemy must be outside the "fog of war" and also not explicitly invisible.
