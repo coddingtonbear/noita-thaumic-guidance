@@ -1,6 +1,24 @@
 <Mod
 	name="Thaumic Guidance"
-	description="Gamepad-friendly aim assist mod for Noita (fork of Aim Assist, fixed and improved)."
+	description="
+Gamepad-friendly aim assist mod for Noita — a fork of the original Aim Assist mod, fixed and improved.
+
+When you fire a projectile, Thaumic Guidance automatically steers it toward the nearest valid enemy within a targeting cone. It checks line of sight, probes multiple points on each enemy's body, and picks the best available aim point so your shots land even on a controller.
+
+[h2]Features[/h2]
+
+[list]
+[*][b]Thaumic Guidance[/b] [i](aim assist)[/i] — redirects projectiles toward enemies within a targeting cone, prioritizing by distance and angular alignment
+[*][b]Arcane Identification[/b] [i](targeted enemy identification)[/i] — optionally prints the locked-on enemy's name to the game log (&quot;Thaumic sigil bound to [enemy]!&quot;)
+[*][b]Warding Glyphs[/b] [i](off-screen enemy indicators)[/i] — shows directional indicators at the screen edges pointing toward off-screen enemies, with brighter glyphs for enemies in line of sight and dimmer ones for those behind cover.
+[/list]
+
+These features are enabled by default once the mod is installed, but can be disabled from the Settings page.
+
+[h2]Credits[/h2]
+
+Based on the original [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3613890248]Aim Assist[/url] mod for Noita by ImmortalDamned.
+"
 	request_no_api_restrictions="0"
 	tags="quality of life,gameplay,cheats"
 	dont_upload_folders=""
