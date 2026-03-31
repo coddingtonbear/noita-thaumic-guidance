@@ -93,13 +93,17 @@ function source()
         recalculate(entity)
     end
 
-    -- DEBUG: draw markers at candidate bottom edges
-    local candidates = {180, 240, 360, 720}
-    for _, y in ipairs(candidates) do
-        widget_list_insert(widget_list, GuiText, 100, y - EDGE_MARGIN, "bot=" .. y)
+    -- DEBUG: show gui dimensions and player screen position every frame
+    local px, py = EntityGetTransform(entity)
+    local psx, psy = px and get_pos_on_screen(px, py, gui) or 0, 0
+    widget_list_insert(widget_list, GuiText, 0, 10,
+        "gui=" .. math.floor(gui_w) .. "x" .. math.floor(gui_h)
+        .. " player=" .. math.floor(psx) .. "," .. math.floor(psy))
+    if #cached_indicators > 0 then
+        local ind = cached_indicators[1]
+        widget_list_insert(widget_list, GuiText, 0, 20,
+            "ind cx=" .. math.floor(ind.cx) .. " cy=" .. math.floor(ind.cy))
     end
-    -- DEBUG: print gui dimensions every ~5s
-    widget_list_insert(widget_list, GuiText, 0, 10, "gui=" .. math.floor(gui_w) .. "x" .. math.floor(gui_h))
 
     for i = 1, math.min(#cached_indicators, MAX_INDICATORS) do
         local ind = cached_indicators[i]
