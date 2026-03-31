@@ -67,10 +67,17 @@ local function recalculate(entity)
                 local has_los = not RaytraceSurfaces(player_x, player_y, ex, ey)
 
                 local center_x, center_y = screen_w * 0.5, screen_h * 0.5
-                -- Clamp so the sprite center stays on-screen with margin
-                local cx = clamp(sx, EDGE_MARGIN + half_w, screen_w - EDGE_MARGIN - half_w) - half_w
-                local cy = clamp(sy, EDGE_MARGIN + half_h, screen_h - EDGE_MARGIN - half_h) - half_h
                 local angle = math.atan2(sy - center_y, sx - center_x)
+                -- Project ray from screen center toward enemy, find where it hits the screen edge
+                local dx = sx - center_x
+                local dy = sy - center_y
+                local max_x = screen_w * 0.5 - EDGE_MARGIN - half_w
+                local max_y = screen_h * 0.5 - EDGE_MARGIN - half_h
+                local scale_x = dx ~= 0 and max_x / math.abs(dx) or math.huge
+                local scale_y = dy ~= 0 and max_y / math.abs(dy) or math.huge
+                local scale = math.min(scale_x, scale_y)
+                local cx = center_x + dx * scale - half_w
+                local cy = center_y + dy * scale - half_h
 
                 indicators[#indicators + 1] = {
                     cx = cx, cy = cy,
