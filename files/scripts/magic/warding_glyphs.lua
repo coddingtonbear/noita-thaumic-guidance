@@ -92,16 +92,15 @@ function source()
 
     local widget_list = widget_list_begin(window, 100)
 
-    -- DEBUG: y-axis probes to confirm actual GUI height
+    -- DEBUG: fine-grained y-axis probes to find actual GUI bottom
     local probes = {
-        {0, 0,   "y0"},
-        {0, 60,  "y60"},
-        {0, 120, "y120"},
-        {0, 180, "y180"},
-        {0, 240, "y240"},
         {0, 300, "y300"},
+        {0, 310, "y310"},
+        {0, 320, "y320"},
+        {0, 330, "y330"},
+        {0, 340, "y340"},
+        {0, 350, "y350"},
         {0, 360, "y360"},
-        {0, 420, "y420"},
     }
     for _, p in ipairs(probes) do
         widget_list_insert(widget_list, GuiText, p[1], p[2], p[3])
