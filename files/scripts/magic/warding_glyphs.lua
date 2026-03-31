@@ -45,9 +45,10 @@ local function recalculate(entity)
     for _, enemy in ipairs(enemies) do
         local ex, ey = EntityGetTransform(enemy)
         if ex ~= nil and enemy ~= entity and
-            EntityGetHerdRelationSafe(entity, enemy) < 100 and
-            GameGetFogOfWar(ex, ey) < FOG_THRESHOLD and
-            not IsInvisible(enemy) then
+            EntityGetHerdRelationSafe(entity, enemy) < 100 then
+            -- DEBUG: fog of war and invisibility checks disabled
+            -- GameGetFogOfWar(ex, ey) < FOG_THRESHOLD and
+            -- not IsInvisible(enemy) then
 
             local sx, sy = get_pos_on_screen(ex, ey, gui)
             local is_offscreen = sx < SCREEN_INSET or sx > screen_w - SCREEN_INSET or
