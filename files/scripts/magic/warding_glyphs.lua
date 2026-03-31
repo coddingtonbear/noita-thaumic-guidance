@@ -95,7 +95,8 @@ function source()
 
     -- DEBUG: show gui dimensions and player screen position every frame
     local px, py = EntityGetTransform(entity)
-    local psx, psy = px and get_pos_on_screen(px, py, gui) or 0, 0
+    local psx, psy = 0, 0
+    if px then psx, psy = get_pos_on_screen(px, py, gui) end
     widget_list_insert(widget_list, GuiText, 0, 10,
         "gui=" .. math.floor(gui_w) .. "x" .. math.floor(gui_h)
         .. " player=" .. math.floor(psx) .. "," .. math.floor(psy))
