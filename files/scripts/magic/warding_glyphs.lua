@@ -4,7 +4,7 @@ local gui = gui or GuiCreate()
 local window = window or window_new(gui)
 
 local FOG_THRESHOLD = 200
-local EDGE_MARGIN = 20
+local EDGE_MARGIN = 10
 local SCREEN_INSET = 2  -- buffer zone to avoid flicker at screen edges
 local MAX_INDICATORS = 16
 local RECALC_INTERVAL = 15  -- recalculate enemy positions every N frames
@@ -15,7 +15,7 @@ local sprite_w = nil
 local sprite_h = nil
 local last_recalc_frame = -RECALC_INTERVAL  -- force recalc on first run
 
--- gui_w/gui_h are set inside source() after GuiStartFrame, then used by recalculate()
+-- gui_w/gui_h are read inside source() after GuiStartFrame and cached here for recalculate()
 local gui_w = 0
 local gui_h = 0
 
@@ -38,10 +38,9 @@ local function recalculate(entity)
     for _, enemy in ipairs(enemies) do
         local ex, ey = EntityGetTransform(enemy)
         if ex ~= nil and enemy ~= entity and
-            EntityGetHerdRelationSafe(entity, enemy) < 100 then
-            -- DEBUG: fog of war and invisibility checks disabled
-            -- GameGetFogOfWar(ex, ey) < FOG_THRESHOLD and
-            -- not IsInvisible(enemy) then
+            EntityGetHerdRelationSafe(entity, enemy) < 100 and
+            GameGetFogOfWar(ex, ey) < FOG_THRESHOLD and
+            not IsInvisible(enemy) then
 
             local sx, sy = get_pos_on_screen(ex, ey, gui)
             local is_offscreen = sx < SCREEN_INSET or sx > gui_w - SCREEN_INSET or
@@ -85,25 +84,12 @@ function source()
 
     local widget_list = widget_list_begin(window, 100)
 
-    -- Read dimensions inside GuiStartFrame (called by widget_list_begin) for consistent values
+    -- Read dimensions after GuiStartFrame (called by widget_list_begin) for consistent values
     gui_w, gui_h = GuiGetScreenDimensions(gui)
 
     if frame - last_recalc_frame >= RECALC_INTERVAL then
         last_recalc_frame = frame
         recalculate(entity)
-    end
-
-    -- DEBUG: show gui dimensions and player screen position every frame
-    local px, py = EntityGetTransform(entity)
-    local psx, psy = 0, 0
-    if px then psx, psy = get_pos_on_screen(px, py, gui) end
-    widget_list_insert(widget_list, GuiText, 0, 10,
-        "gui=" .. math.floor(gui_w) .. "x" .. math.floor(gui_h)
-        .. " player=" .. math.floor(psx) .. "," .. math.floor(psy))
-    if #cached_indicators > 0 then
-        local ind = cached_indicators[1]
-        widget_list_insert(widget_list, GuiText, 0, 50,
-            "ind cx=" .. math.floor(ind.cx) .. " cy=" .. math.floor(ind.cy))
     end
 
     for i = 1, math.min(#cached_indicators, MAX_INDICATORS) do
