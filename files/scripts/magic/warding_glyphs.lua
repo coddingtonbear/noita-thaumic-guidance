@@ -101,7 +101,7 @@ function source()
         .. " player=" .. math.floor(psx) .. "," .. math.floor(psy))
     if #cached_indicators > 0 then
         local ind = cached_indicators[1]
-        widget_list_insert(widget_list, GuiText, 0, 20,
+        widget_list_insert(widget_list, GuiText, 0, 50,
             "ind cx=" .. math.floor(ind.cx) .. " cy=" .. math.floor(ind.cy))
     end
 
