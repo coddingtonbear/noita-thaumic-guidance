@@ -106,26 +106,16 @@ function source()
 
     local widget_list = widget_list_begin(window, 100)
 
-    -- DEBUG: draw markers at the four corners of the clamping boundary
-    do
-        local corners = {
-            {EDGE_MARGIN, EDGE_MARGIN, "TL"},
-            {screen_w - EDGE_MARGIN, EDGE_MARGIN, "TR"},
-            {EDGE_MARGIN, screen_h - EDGE_MARGIN, "BL"},
-            {screen_w - EDGE_MARGIN, screen_h - EDGE_MARGIN, "BR"},
-            {screen_w * 0.5, screen_h * 0.5, "C"},
-        }
-        for _, c in ipairs(corners) do
-            widget_list_insert(widget_list, GuiColorSetForNextWidget, 0.0, 1.0, 0.0, 1.0)
-            widget_list_insert(widget_list, GuiText, c[1], c[2], c[3])
-        end
+    -- DEBUG: log screen dimensions and first indicator position every ~5s
+    if frame - last_debug_frame >= 300 then
+        last_debug_frame = frame
+        local vx, vy = get_resolution(gui)
+        GamePrint("screen=" .. math.floor(screen_w) .. "x" .. math.floor(screen_h)
+            .. " vres=" .. math.floor(vx) .. "x" .. math.floor(vy)
+            .. " sprite=" .. tostring(sprite_w) .. "x" .. tostring(sprite_h))
         if #cached_indicators > 0 then
             local ind = cached_indicators[1]
-            local hw = (sprite_w or 0) * 0.5
-            local hh = (sprite_h or 0) * 0.5
-            widget_list_insert(widget_list, GuiColorSetForNextWidget, 1.0, 1.0, 0.0, 1.0)
-            widget_list_insert(widget_list, GuiText, ind.cx + hw, ind.cy + hh,
-                math.floor(ind.cx) .. "," .. math.floor(ind.cy))
+            GamePrint("ind[1] cx=" .. math.floor(ind.cx) .. " cy=" .. math.floor(ind.cy))
         end
     end
 
