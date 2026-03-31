@@ -106,7 +106,7 @@ function source()
         end
 
         local id = widget_list_id(widget_list, source)
-        widget_list_insert(widget_list, GuiImage, id, ind.cx, ind.cy, SPRITE, 1.0, 1.0, 0, ind.angle)
+        widget_list_insert(widget_list, GuiImage, id, ind.cx, ind.cy, SPRITE, 1.0, 1.0, 1.0, ind.angle)
     end
 
     widget_list_end(widget_list)
