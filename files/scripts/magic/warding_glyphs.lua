@@ -13,7 +13,6 @@ local SPRITE = "mods/thaumic_guidance/files/scripts/magic/warding_glyph.png"
 local cached_indicators = {}
 local sprite_w = nil
 local sprite_h = nil
-local last_debug_frame = -300
 local last_recalc_frame = -RECALC_INTERVAL  -- force recalc on first run
 
 local function recalculate(entity)
@@ -27,10 +26,7 @@ local function recalculate(entity)
         sprite_w, sprite_h = GuiGetImageDimensions(gui, SPRITE)
     end
 
-    -- GuiGetScreenDimensions returns 2x the actual GUI coordinate space,
-    -- so divide by 2 to get the space that GuiImage/GuiText actually uses.
-    local raw_w, raw_h = GuiGetScreenDimensions(gui)
-    local gui_w, gui_h = raw_w * 0.5, raw_h * 0.5
+    local gui_w, gui_h = GuiGetScreenDimensions(gui)
     local half_w, half_h = sprite_w * 0.5, sprite_h * 0.5
 
     local enemies = EntityGetWithTag("enemy") or {}
@@ -44,9 +40,7 @@ local function recalculate(entity)
             -- GameGetFogOfWar(ex, ey) < FOG_THRESHOLD and
             -- not IsInvisible(enemy) then
 
-            -- get_pos_on_screen returns in [0, raw_w] space; scale to GUI space
-            local raw_sx, raw_sy = get_pos_on_screen(ex, ey, gui)
-            local sx, sy = raw_sx * 0.5, raw_sy * 0.5
+            local sx, sy = get_pos_on_screen(ex, ey, gui)
             local is_offscreen = sx < SCREEN_INSET or sx > gui_w - SCREEN_INSET or
                sy < SCREEN_INSET or sy > gui_h - SCREEN_INSET
 
@@ -54,8 +48,7 @@ local function recalculate(entity)
                 local dist = get_distance(player_x, player_y, ex, ey)
                 local has_los = not RaytraceSurfaces(player_x, player_y, ex, ey)
 
-                local raw_ox, raw_oy = get_pos_on_screen(player_x, player_y, gui)
-                local origin_x, origin_y = raw_ox * 0.5, raw_oy * 0.5
+                local origin_x, origin_y = get_pos_on_screen(player_x, player_y, gui)
                 local angle = math.atan2(sy - origin_y, sx - origin_x)
                 local dx = sx - origin_x
                 local dy = sy - origin_y
@@ -93,20 +86,6 @@ function source()
     end
 
     local widget_list = widget_list_begin(window, 100)
-
-    -- DEBUG: log player screen pos and first indicator position every ~5s
-    if frame - last_debug_frame >= 300 then
-        last_debug_frame = frame
-        local raw_w, raw_h = GuiGetScreenDimensions(gui)
-        local gui_w_d, gui_h_d = raw_w * 0.5, raw_h * 0.5
-        local ex, ey = EntityGetTransform(entity)
-        local raw_ox, raw_oy = ex and get_pos_on_screen(ex, ey, gui) or 0, 0
-        GamePrint("gui=" .. math.floor(gui_w_d) .. "x" .. math.floor(gui_h_d) .. " oy=" .. math.floor(raw_oy * 0.5))
-        if #cached_indicators > 0 then
-            local ind = cached_indicators[1]
-            GamePrint("ind cx=" .. math.floor(ind.cx) .. " cy=" .. math.floor(ind.cy))
-        end
-    end
 
     for i = 1, math.min(#cached_indicators, MAX_INDICATORS) do
         local ind = cached_indicators[i]
