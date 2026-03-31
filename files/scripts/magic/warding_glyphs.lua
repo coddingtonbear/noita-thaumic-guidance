@@ -4,7 +4,7 @@ local gui = gui or GuiCreate()
 local window = window or window_new(gui)
 
 local FOG_THRESHOLD = 200
-local EDGE_MARGIN = 10
+local EDGE_MARGIN = 15
 local SCREEN_INSET = 2  -- buffer zone to avoid flicker at screen edges
 local MAX_INDICATORS = 16
 local RECALC_INTERVAL = 15  -- recalculate enemy positions every N frames
