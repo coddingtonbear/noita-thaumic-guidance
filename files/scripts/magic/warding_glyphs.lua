@@ -85,7 +85,15 @@ function source()
         recalculate(entity)
     end
 
+    local gui_w, gui_h = GuiGetScreenDimensions(gui)
+
     local widget_list = widget_list_begin(window, 100)
+
+    -- DEBUG: draw markers at each candidate bottom edge to find the real one
+    local candidates = {180, 240, 360, 720}
+    for _, y in ipairs(candidates) do
+        widget_list_insert(widget_list, GuiText, 100, y - EDGE_MARGIN, "bot=" .. y)
+    end
 
     for i = 1, math.min(#cached_indicators, MAX_INDICATORS) do
         local ind = cached_indicators[i]
