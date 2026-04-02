@@ -1,0 +1,18 @@
+[tasks.publish]
+description = "Publish new version to the Steam workshop"
+run = """
+#!/bin/bash
+cat << EOT > item.vdf
+"workshopitem"
+{
+    "appid" "881100"
+    "publishedfileid" "3694371849"
+    "contentfolder" "$MISE_PROJECT_ROOT"
+    "changenote" "$@"
+}
+EOT
+
+steamcmd +login latestrevision +workshop_build_item "$MISE_PROJECT_ROOT/item.vdf" +quit
+
+rm item.vdf
+"""
