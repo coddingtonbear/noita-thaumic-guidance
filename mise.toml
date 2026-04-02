@@ -2,17 +2,47 @@
 description = "Publish new version to the Steam workshop"
 run = """
 #!/bin/bash
-cat << EOT > item.vdf
+set -e
+
+# Parse args: strip --dry-run, collect rest as change note
+DRY_RUN=false
+ARGS=()
+for arg in "$@"; do
+  if [[ "$arg" == "--dry-run" ]]; then
+    DRY_RUN=true
+  else
+    ARGS+=("$arg")
+  fi
+done
+CHANGENOTE="${ARGS[*]}"
+
+STAGE="$MISE_PROJECT_ROOT/dist"
+
+# Build staging dir
+rm -rf "$STAGE"
+mkdir -p "$STAGE"
+
+cp "$MISE_PROJECT_ROOT/init.lua" "$STAGE/"
+cp "$MISE_PROJECT_ROOT/settings.lua" "$STAGE/"
+cp "$MISE_PROJECT_ROOT/mod.xml" "$STAGE/"
+cp "$MISE_PROJECT_ROOT/compatibility.xml" "$STAGE/"
+cp "$MISE_PROJECT_ROOT/workshop.xml" "$STAGE/"
+cp "$MISE_PROJECT_ROOT/mod_id.txt" "$STAGE/"
+cp -r "$MISE_PROJECT_ROOT/files" "$STAGE/"
+
+cat << EOT > "$MISE_PROJECT_ROOT/item.vdf"
 "workshopitem"
 {
     "appid" "881100"
     "publishedfileid" "3694371849"
-    "contentfolder" "$MISE_PROJECT_ROOT"
-    "changenote" "$@"
+    "contentfolder" "$STAGE"
+    "previewfile" "$MISE_PROJECT_ROOT/workshop_preview_image.png"
+    "changenote" "$CHANGENOTE"
 }
 EOT
 
-steamcmd +login latestrevision +workshop_build_item "$MISE_PROJECT_ROOT/item.vdf" +quit
-
-rm item.vdf
+if ! $DRY_RUN; then
+  steamcmd +login latestrevision +workshop_build_item "$MISE_PROJECT_ROOT/item.vdf" +quit
+  rm -rf "$STAGE" "$MISE_PROJECT_ROOT/item.vdf"
+fi
 """
