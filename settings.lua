@@ -7,8 +7,8 @@ mod_settings_version = 1
 
 mod_settings = {
     {
-        id = "enabled",
-        ui_name = "Enabled",
+        id = "thaumic_guidance",
+        ui_name = "Thaumic Guidance",
         ui_description = "Enable or disable Thaumic Guidance aim assist.",
         value_default = true,
         scope = MOD_SETTING_SCOPE_RUNTIME,
