@@ -2,6 +2,7 @@ dofile_once("mods/thaumic_guidance/files/scripts/lib/utilities.lua")
 
 local last_enabled = nil
 local last_warding_enabled = nil
+local last_shortcut_down = false
 
 local function announce_enabled(enabled)
     GamePrint("Thaumic sigils " .. (enabled and "awakened" or "dormant") .. ".")
@@ -17,7 +18,7 @@ local function setting_is_enabled(id)
 end
 
 function OnPlayerSpawned(player)
-    local mod_enabled = setting_is_enabled("enabled")
+    local mod_enabled = setting_is_enabled("thaumic_guidance")
     local autoaim = Player(player).autoaim  -- Creates the LuaComponent if not present.
     if autoaim ~= nil then
         autoaim._enabled = mod_enabled
@@ -33,7 +34,17 @@ function OnPlayerSpawned(player)
 end
 
 function OnWorldPostUpdate()
-    local mod_enabled = setting_is_enabled("enabled")
+    local shortcut_code = ModSettingGet("thaumic_guidance.shortcut_key")
+    if shortcut_code then
+        local key_down = InputIsKeyDown(shortcut_code)
+        if key_down and not last_shortcut_down then
+            local currently_enabled = setting_is_enabled("thaumic_guidance")
+            ModSettingSetNextValue("thaumic_guidance.thaumic_guidance", not currently_enabled, false)
+        end
+        last_shortcut_down = key_down
+    end
+
+    local mod_enabled = setting_is_enabled("thaumic_guidance")
     if mod_enabled ~= last_enabled then
         local should_announce = last_enabled ~= nil
         last_enabled = mod_enabled
