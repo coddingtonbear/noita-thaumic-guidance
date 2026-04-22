@@ -38,8 +38,9 @@ function OnWorldPostUpdate()
     if shortcut_code then
         local key_down = InputIsKeyDown(shortcut_code)
         if key_down and not last_shortcut_down then
-            local currently_enabled = setting_is_enabled("thaumic_guidance")
-            ModSettingSetNextValue("thaumic_guidance.thaumic_guidance", not currently_enabled, false)
+            local new_value = not setting_is_enabled("thaumic_guidance")
+            ModSettingSetNextValue("thaumic_guidance.thaumic_guidance", new_value, false)
+            ModSettingSet("thaumic_guidance.thaumic_guidance", new_value)
         end
         last_shortcut_down = key_down
     end
