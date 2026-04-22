@@ -27,48 +27,52 @@ local function shortcut_key_name(code)
     return tostring(code)
 end
 
-local shortcut_awaiting_input = false
-local function shortcut_key_ui_fn(mod_id_, gui, in_main_menu, im_id, setting)
-    local id = mod_setting_get_id(mod_id_, setting)
-    local current = ModSettingGetNextValue(id) or setting.value_default
-    GuiLayoutBeginHorizontal(gui, mod_setting_group_x_offset, 0, true)
-    local new_value
-    local label
-    if shortcut_awaiting_input then
-        label = "Press a key..."
-        for _, code in pairs(SHORTCUT_KEYS) do
-            if InputIsKeyDown(code) then
-                shortcut_awaiting_input = false
-                new_value = code
-                break
-            end
-        end
-        if new_value == nil then
-            for _, code in pairs(CANCEL_KEYS) do
+local function make_keybind_ui_fn()
+    local awaiting_input = false
+    return function(mod_id_, gui, in_main_menu, im_id, setting)
+        local id = mod_setting_get_id(mod_id_, setting)
+        local current = ModSettingGetNextValue(id) or setting.value_default
+        GuiLayoutBeginHorizontal(gui, mod_setting_group_x_offset, 0, true)
+        local new_value
+        local label
+        if awaiting_input then
+            label = "Press a key..."
+            for _, code in pairs(SHORTCUT_KEYS) do
                 if InputIsKeyDown(code) then
-                    shortcut_awaiting_input = false
+                    awaiting_input = false
+                    new_value = code
                     break
                 end
             end
+            if new_value == nil then
+                for _, code in pairs(CANCEL_KEYS) do
+                    if InputIsKeyDown(code) then
+                        awaiting_input = false
+                        break
+                    end
+                end
+            end
+        else
+            label = shortcut_key_name(current)
         end
-    else
-        label = shortcut_key_name(current)
+        if GuiButton(gui, im_id, 0, 0, setting.ui_name .. ": " .. label) then
+            awaiting_input = true
+        end
+        local right_clicked = select(2, GuiGetPreviousWidgetInfo(gui))
+        if right_clicked then
+            new_value = setting.value_default
+            GamePlaySound("data/audio/Desktop/ui.bank", "ui/button_click", 0, 0)
+        end
+        GuiLayoutEnd(gui)
+        if new_value ~= nil then
+            ModSettingSetNextValue(id, new_value, false)
+            mod_setting_handle_change_callback(mod_id_, gui, in_main_menu, setting, current, new_value)
+        end
+        mod_setting_tooltip(mod_id_, gui, in_main_menu, setting)
     end
-    if GuiButton(gui, im_id, 0, 0, setting.ui_name .. ": " .. label) then
-        shortcut_awaiting_input = true
-    end
-    local right_clicked = select(2, GuiGetPreviousWidgetInfo(gui))
-    if right_clicked then
-        new_value = setting.value_default
-        GamePlaySound("data/audio/Desktop/ui.bank", "ui/button_click", 0, 0)
-    end
-    GuiLayoutEnd(gui)
-    if new_value ~= nil then
-        ModSettingSetNextValue(id, new_value, false)
-        mod_setting_handle_change_callback(mod_id_, gui, in_main_menu, setting, current, new_value)
-    end
-    mod_setting_tooltip(mod_id_, gui, in_main_menu, setting)
 end
+
+local shortcut_key_ui_fn = make_keybind_ui_fn()
 
 mod_settings = {
     {
